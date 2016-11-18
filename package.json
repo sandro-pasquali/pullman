@@ -1,6 +1,6 @@
 {
   "name": "pullman",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Realm-powered log stream writer/reader",
   "main": "index.js",
   "scripts": {
@@ -23,5 +23,16 @@
   },
   "devDependencies": {
     "surveyor": "^2.0.1"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandro-pasquali/pullman.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sandro-pasquali/pullman/issues"
+  },
+  "homepage": "https://github.com/sandro-pasquali/pullman#readme"
 }
