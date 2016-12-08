@@ -8,6 +8,8 @@ let winston = require('winston');
 let Realm = require('realm');
 let _ = require('lodash');
 
+let isDev = process.env.NODE_ENV === 'development';
+
 let RealmBus = function(options) {
 
     winston.Transport.call(this, options);
@@ -58,8 +60,8 @@ RealmBus.prototype.log = function(level, msg, meta, callback) {
         //
         this.realm.write(() => this.realm.create('Events', {
             level: level,
-            type: meta.type || '*',
-            message: meta.message || '*',
+            type: meta.type,
+            message: meta.message,
             timestamp: new Date()
         }));
 
@@ -70,9 +72,22 @@ RealmBus.prototype.log = function(level, msg, meta, callback) {
             meta = JSON.stringify(meta);
         } catch(e) {}
 
+        // Console logging when in dev mode
+        //
+        if(isDev) {
+            level = chalk.bgYellow.black.bold(` ${level} `);
+            msg = chalk.bgGreen.white.bold(` ${msg} `);
+            meta = chalk.bgWhite.black(` ${meta} `);
+
+            console.log(level, msg, meta);
+        }
+
         callback(null, true);
     })
     .catch(err => {
+        if(isDev) {
+            console.log(chalk.bgRed.white.bold(` BUS ERROR: ${err.message} `));
+        }
         callback(err)
     })
 };
