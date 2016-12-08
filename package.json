@@ -1,6 +1,6 @@
 {
   "name": "pullman",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Realm-powered log stream writer/reader",
   "main": "index.js",
   "scripts": {

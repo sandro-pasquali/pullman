@@ -8,18 +8,17 @@ let winston = require('winston');
 let Realm = require('realm');
 let _ = require('lodash');
 
-let isDev = process.env.NODE_ENV === 'development';
-
 let RealmBus = function(options) {
 
     winston.Transport.call(this, options);
 
     // Configure the Realm
     //
-    let LogSchema = {
-        name: 'Log',
+    let EventsSchema = {
+        name: 'Events',
         properties: {
             level: 'string',
+            type:  'string',
             message: 'string',
             timestamp: 'date'
         }
@@ -27,7 +26,7 @@ let RealmBus = function(options) {
 
     this.realm = new Realm({
         path: this.realmPath,
-        schema: [LogSchema]
+        schema: [EventsSchema]
     });
 };
 
@@ -57,9 +56,10 @@ RealmBus.prototype.log = function(level, msg, meta, callback) {
 
         // The logging db
         //
-        this.realm.write(() => this.realm.create('Log', {
+        this.realm.write(() => this.realm.create('Events', {
             level: level,
-            message: msg,
+            type: meta.type || '*',
+            message: meta.message || '*',
             timestamp: new Date()
         }));
 
@@ -70,20 +70,9 @@ RealmBus.prototype.log = function(level, msg, meta, callback) {
             meta = JSON.stringify(meta);
         } catch(e) {}
 
-        // Console logging when in dev mode
-        //
-        if(isDev) {
-            level = chalk.bgYellow.black.bold(` ${level} `);
-            msg = chalk.bgGreen.white.bold(` ${msg} `);
-            meta = chalk.bgWhite.black(` ${meta} `);
-
-            console.log(level, msg, meta);
-        }
-
         callback(null, true);
     })
     .catch(err => {
-        console.log(chalk.bgRed.white.bold(` BUS ERROR: ${err.message} `));
         callback(err)
     })
 };

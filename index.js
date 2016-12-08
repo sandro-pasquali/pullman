@@ -29,6 +29,6 @@ module.exports = (logPath) => {
         write: winston,
         read: new Realm({
             path: realmPath
-        }).objects('Log')
+        }).objects('Events')
     };
 };
